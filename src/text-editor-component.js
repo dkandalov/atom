@@ -1,5 +1,7 @@
 /* global ResizeObserver */
 
+const {onHiddenInputEvent} = require('./event-recorder')
+
 const etch = require('etch')
 const {Point, Range} = require('text-buffer')
 const LineTopIndex = require('line-top-index')
@@ -1614,6 +1616,13 @@ class TextEditorComponent {
   }
 
   didTextInput (event) {
+    let wasProcessed = onHiddenInputEvent(event)
+    if (wasProcessed) {
+      event.stopImmediatePropagation()
+      event.stopPropagation()
+      return
+    }
+
     if (this.compositionCheckpoint) {
       this.props.model.revertToCheckpoint(this.compositionCheckpoint)
       this.compositionCheckpoint = null

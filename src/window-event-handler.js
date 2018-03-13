@@ -1,5 +1,6 @@
 const {Disposable, CompositeDisposable} = require('event-kit')
 const listen = require('./delegated-listener')
+const {onWindowEvent} = require('./event-recorder')
 
 // Handles low-level events related to the `window`.
 module.exports =
@@ -107,6 +108,9 @@ class WindowEventHandler {
   }
 
   handleDocumentKeyEvent (event) {
+    let wasHandled = onWindowEvent(event)
+    if (wasHandled) return
+
     this.atomEnvironment.keymaps.handleKeyboardEvent(event)
     event.stopImmediatePropagation()
   }
